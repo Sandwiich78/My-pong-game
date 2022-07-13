@@ -1,9 +1,10 @@
 import pygame as pg
 from time import sleep
-
+pg.init()
 WIDTH, HEIGHT = 720, 500  # Width and height of the window
 WINDOW = pg.display.set_mode((WIDTH, HEIGHT))
 clock = pg.time.Clock()
+font = pg.font.SysFont("comicsansms", 72)
 
 
 class Ball:
@@ -28,7 +29,6 @@ class Ball:
         self.x += self.speed_x
 
     def reset(self):
-        print(f"----------------------\nPlayer1 points: {player1.points}\nPlayer2 points: {player2.points}\n----------------------")
         ball.x, ball.y = ball.initial_x, ball.initial_y
         player1.y, player2.y = player1.initial_y, player2.initial_y
         sleep(2)
@@ -67,9 +67,28 @@ running = True
 
 while running:
     clock.tick(60)  # Number of FPS
+    WINDOW.fill((0, 0, 0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+
+    text = font.render(str(player1.points), False, (0,255,255))
+    WINDOW.blit(text,((WIDTH*25)/100,(HEIGHT*25)/100 ))
+    text = font.render(str(player2.points),False, (0,255,255))
+    WINDOW.blit(text,((WIDTH*75)/100,(HEIGHT*25)/100 ))
+
+    if player1.points == 10 :
+        text_victory = font.render("Player 1 won !", False, (0,255,255))
+        WINDOW.blit(text_victory,(200,200))
+        pg.display.flip()
+        sleep(5)
+        running = False
+    elif player2.points == 10:
+        text_victory = font.render("Player 2 won !", False, (0,255,255))
+        WINDOW.blit(text_victory,(200,200))
+        pg.display.flip()
+        sleep(5)
+        running = False
 
     if ball.position.colliderect(player1.position):
         ball.x = 15
@@ -85,7 +104,6 @@ while running:
         player1.points += 1
         ball.reset()
 
-    WINDOW.fill((0, 0, 0))
     player1.move()
     player2.move()
     pg.draw.rect(WINDOW, (0, 255, 255), ball.position)
